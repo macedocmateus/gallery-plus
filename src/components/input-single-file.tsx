@@ -39,21 +39,42 @@ interface InputSingleFileProps extends VariantProps<typeof inputSingleFileVarian
     Omit<React.ComponentProps<"input">, "size">{
         form: any
         error?: React.ReactNode
+        allowedExtensions: string[]
+        maxFileSizeInMB: number
     }
 
 export default function InputSingleFile({
     size, 
     error,
     form,
+    allowedExtensions,
+    maxFileSizeInMB,
     ...props
 }: InputSingleFileProps) {
     const formValues = useWatch({control: form.control})
     const name = props.name || "";
-    const formFile: File = React.useMemo(() => formValues[name]?.[0], [formValues, name])
+    const formFile: File = React.useMemo(() => formValues[name]?.[0], [formValues, name]
+  )
+  const {fileExtension, fileSize} = React.useMemo(() => ({
+    fileExtension: formFile?.name.split('.')?.pop()?.toLowerCase() || "",
+    fileSize: formFile?.size || 0
+  }), [formFile])
+
+  function isValidExtension() {
+    return allowedExtensions.includes(fileExtension)
+  }
+
+  function isValidSize() {
+    return fileSize <= maxFileSizeInMB * 1024 * 1024
+  }
+
+  function isValidFile() {
+    return isValidExtension() && isValidSize()
+  }
     
     return (
             <div>
-                {!formFile ?
+                {!formFile || !isValidFile() ?
                 (
                 <>
                     <div className="w-full relative group cursor-pointer">
@@ -73,10 +94,24 @@ export default function InputSingleFile({
                             </Text>
                         </div>
                     </div>
-                    {error && (<Text variant='label-small' className='text-accent-red'>
-                        Erro no campo
-                    </Text>
-                )}
+                    <div className='flex flex-col gap-1 mt-1'>
+                        {formFile && !isValidExtension() &&
+                        <Text variant='label-small' className='text-accent-red'>
+                            Tipo de arquivo inválido
+                        </Text>
+                        }
+                        
+                        {formFile && !isValidSize() &&
+                        <Text variant='label-small' className='text-accent-red'>
+                            O tamanho do arquivo ultrapassa o máximo
+                        </Text>
+                        }
+                        
+                        {error && (<Text variant='label-small' className='text-accent-red'>
+                            {error}
+                        </Text>
+                    )}
+                    </div>
             </>
         ) : (
             <div className={`
