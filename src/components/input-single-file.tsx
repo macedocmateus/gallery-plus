@@ -41,6 +41,7 @@ interface InputSingleFileProps extends VariantProps<typeof inputSingleFileVarian
         error?: React.ReactNode
         allowedExtensions: string[]
         maxFileSizeInMB: number
+        replaceBy: React.ReactNode
     }
 
 export default function InputSingleFile({
@@ -49,6 +50,7 @@ export default function InputSingleFile({
     form,
     allowedExtensions,
     maxFileSizeInMB,
+    replaceBy,
     ...props
 }: InputSingleFileProps) {
     const formValues = useWatch({control: form.control})
@@ -114,6 +116,8 @@ export default function InputSingleFile({
                     </div>
             </>
         ) : (
+            <>
+            {replaceBy}
             <div className={`
                 flex gap-3 items-center 
                 border border-solid border-border-primary mt-5
@@ -137,6 +141,7 @@ export default function InputSingleFile({
                     </div>
                 </div>
             </div>
+            </>
         )}
         </div>
     )
