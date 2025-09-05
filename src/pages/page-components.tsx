@@ -10,7 +10,7 @@ import SearchIcon from "../assets/icons/search.svg?react"
 import InputCheckbox from "../components/input-checkbox";
 import InputSingleFile from "../components/input-single-file";
 import { useForm } from "react-hook-form";
-import ImageFilePreview from "../components/image-file-preview";
+import ImagePreview from "../components/image-preview";
 import { 
     Dialog, 
     DialogBody, 
@@ -83,7 +83,7 @@ export default function PageComponents() {
 				<InputSingleFile 
 				form={form} 
 				allowedExtensions={['png', 'jpg', 'jpeg', 'webp']} maxFileSizeInMB={50} 
-				replaceBy={<ImageFilePreview src={fileSource} alt="Image"/>}
+				replaceBy={<ImagePreview src={fileSource} alt="Image"/>}
 				{...form.register("file")}
 				/>
 			</div>
@@ -102,7 +102,7 @@ export default function PageComponents() {
 							<InputSingleFile 
 							form={form} 
 							allowedExtensions={['png', 'jpg', 'jpeg', 'webp']} maxFileSizeInMB={50} 
-							replaceBy={<ImageFilePreview src={fileSource} alt="Image"/>}
+							replaceBy={<ImagePreview src={fileSource} alt="Image"/>}
 							{...form.register("file")}
 							/>
 						</DialogBody>
