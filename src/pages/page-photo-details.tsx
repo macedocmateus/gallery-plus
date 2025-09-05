@@ -6,7 +6,13 @@ export default function PagePhotoDetails() {
     
     return (
             <>
-                <Text variant="heading-large">Página detalhe da foto</Text>
+                <Text variant="heading-large">
+                    Página detalhe da foto
+                </Text>
+                <hr />
+                <Text variant="heading-large">
+                    ID da foto:{id}
+                </Text>
             </>
         )
 }
