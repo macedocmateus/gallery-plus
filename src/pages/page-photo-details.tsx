@@ -35,7 +35,7 @@ export default function PagePhotoDetails() {
                 <PhotosNavigator loading={isLoadingPhoto}/>
                 </header>
 
-                <div className="grid grid-cols-[21rem] gap-24">
+                <div className="grid grid-cols-[21rem_1fr] gap-24">
                     <div className="space-y-3">
                         {!isLoadingPhoto ? (
                         <ImagePreview
