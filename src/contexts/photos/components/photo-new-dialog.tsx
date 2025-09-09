@@ -7,7 +7,7 @@ import InputSingleFile from "../../../components/input-single-file"
 import InputText from "../../../components/input-text"
 import Skeleton from "../../../components/skeleton"
 import Text from "../../../components/text"
-import type { Album } from "../../albums/models/album"
+import useAlbums from "../../albums/hooks/use-albums"
 
 
 interface PhotoNewDialogProps {
@@ -16,15 +16,9 @@ interface PhotoNewDialogProps {
 
 export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
     const form = useForm()
+    const {albums, isLoadingAlbums} = useAlbums()
     
-    // TODO: Dados apenas de exemplo, em breve vamos consumir da API
-    const isLoadingAlbum = false
-    const albums: Album[] = [
-        {id: '123', title: 'Album 1'},
-        {id: '321', title: 'Album 2'},
-        {id: '213', title: 'Album 3'},
-        {id: '312', title: 'Album 4'}
-    ]
+    
     
     return (
     <Dialog>
@@ -58,7 +52,7 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
                     <Text variant="label-small">Selecionar álbuns</Text>
 
                     <div className="flex flex-wrap gap-3">
-                        {!isLoadingAlbum && albums.length > 0 && albums.map(album => 
+                        {!isLoadingAlbums && albums.length > 0 && albums.map(album => 
                         <Button 
                             key={album.id}
                             variant="ghost"
@@ -69,7 +63,7 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
                         </Button>
                     )}
 
-                        {isLoadingAlbum && Array.from({length: 5}).map((_, index) => 
+                        {isLoadingAlbums && Array.from({length: 5}).map((_, index) => 
                         <Skeleton className="w-20 h-7" key={`album-loading-${index}`}/>
                         )}
                     </div>

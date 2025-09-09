@@ -6,6 +6,5 @@ export const api = axios.create({
 })
 
 // Chamar exclusivamente o get
-export function fetcher(url:string, options: AxiosRequestConfig = {}) {
-    api.get(url, options).then((res) => res.data)
-}
+export const fetcher = (url: string, options: AxiosRequestConfig = {}) =>
+  api.get(url, options).then((res) => res.data);
