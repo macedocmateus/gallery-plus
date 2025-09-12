@@ -27,6 +27,8 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
     
     const file = form.watch("file")
     const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
+
+    const albumsIds = form.watch("albumsIds")
     
     React.useEffect(() => {
         if (!modalOpen) {
@@ -36,6 +38,19 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
     
     function handleSubmit(payload: PhotoNewFormSchema) {
         console.log(payload)
+    }
+
+    function handleToggleAlbum(albumId: string) {
+        const albumsIds = form.getValues("albumsIds") || []
+        const albumsSet = new Set(albumsIds) // Set é um pré-array sem valores repetidos na lista
+
+        if (albumsSet.has(albumId)) {
+            albumsSet.delete(albumId)
+        } else {
+            albumsSet.add(albumId)
+        }
+
+        form.setValue("albumsIds", Array.from(albumsSet))
     }
     
     return (
@@ -75,9 +90,12 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
                         {!isLoadingAlbums && albums.length > 0 && albums.map(album => 
                         <Button 
                             key={album.id}
-                            variant="ghost"
+                            variant= {
+                                albumsIds?.includes(album.id) ? "primary" : "ghost"
+                            }
                             size="sm"
                             className="truncate"
+                            onClick={() => handleToggleAlbum(album.id)}
                         >
                             {album.title}
                         </Button>
