@@ -6,27 +6,51 @@ import SelectCheckboxIllustration from "../../../assets/images/select-checkbox.s
 import Skeleton from "../../../components/skeleton"
 import PhotoImageSelectable from "../../photos/components/photo-image-selectable"
 import usePhotos from "../../photos/hooks/use-photos"
+import { albumNewFormSchema, type AlbumNewFormSchema } from "../schemas"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import React from "react"
 
 interface AlbumNewDialogProps {
     trigger: React.ReactNode
 }
 
 export default function AlbumNewDialog({trigger}: AlbumNewDialogProps) {
+    const [modalOpen, setModalOpen] = React.useState(false)
+    const form = useForm<AlbumNewFormSchema>({
+        resolver: zodResolver(albumNewFormSchema)
+    })
+    
     const {photos, isLoadingPhotos} = usePhotos()
+    
+    React.useEffect(() => {
+
+        if (!modalOpen) {
+            form.reset()
+        }
+
+    }, [modalOpen, form])
     
     function handleTogglePhoto(selected: boolean, photoId: string) {
         console.log(selected, photoId)
     }
+
+    function handleSubmit(payload: AlbumNewFormSchema) {
+        console.log(payload)
+    }
     
     return (
-        <Dialog>
+        <Dialog open={modalOpen} onOpenChange={setModalOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
+                <form onSubmit={form.handleSubmit(handleSubmit)}>
                 <DialogHeader>Criar álbum</DialogHeader>
 
                 <DialogBody className="flex flex-col gap-5">
                     <InputText
                     placeholder="Adicione um título"
+                    error={form.formState.errors.title?.message}
+                    {...form.register("title")}
                     />
 
                     <div className="space-y-3">
@@ -77,8 +101,9 @@ export default function AlbumNewDialog({trigger}: AlbumNewDialogProps) {
                         <Button variant="secondary">Cancelar</Button>
                     </DialogClose>
 
-                    <Button>Criar</Button>
+                    <Button type="submit">Criar</Button>
                 </DialogFooter>
+                </form>
             </DialogContent>
         </Dialog>
     )
