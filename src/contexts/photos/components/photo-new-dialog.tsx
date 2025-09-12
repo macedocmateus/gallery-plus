@@ -8,6 +8,8 @@ import InputText from "../../../components/input-text"
 import Skeleton from "../../../components/skeleton"
 import Text from "../../../components/text"
 import useAlbums from "../../albums/hooks/use-albums"
+import { photoNewFormSchema, type PhotoNewFormSchema } from "../schemas"
+import {zodResolver} from "@hookform/resolvers/zod"
 
 
 interface PhotoNewDialogProps {
@@ -15,21 +17,32 @@ interface PhotoNewDialogProps {
 }
 
 export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
-    const form = useForm()
+    const form = useForm<PhotoNewFormSchema>({
+        // Resolver vai resolver o formulário com base no schema
+        resolver: zodResolver(photoNewFormSchema)
+    })
     const {albums, isLoadingAlbums} = useAlbums()
     
+    const file = form.watch("file")
+    const fileSource = file?.[0] ? URL.createObjectURL(file[0]) : undefined;
     
+    function handleSubmit(payload: PhotoNewFormSchema) {
+        console.log(payload)
+    }
     
     return (
     <Dialog>
         <DialogTrigger asChild>{trigger}</DialogTrigger>
         <DialogContent>
+            <form onSubmit={form.handleSubmit(handleSubmit)}>
             <DialogHeader>Adicionar foto</DialogHeader>
 
             <DialogBody className="flex flex-col gap-5">
                 <InputText 
                 placeholder="Adicione um título"
                 maxLength={255}
+                error={form.formState.errors.title?.message}
+                {...form.register("title")}
                 />
 
                 <Alert>
@@ -42,12 +55,11 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
                     form={form}
                     allowedExtensions={['png', 'jpg', 'jpeg']}
                     maxFileSizeInMB={50}
-                    replaceBy={<ImagePreview
-                    className="w-full h-56"
+                    replaceBy={<ImagePreview src={fileSource} className="w-full h-56"/>}
+                    error={form.formState.errors.file?.message}
+                    {...form.register("file")}
                     />
-                }
-                />
-
+                
                 <div className="space-y-3">
                     <Text variant="label-small">Selecionar álbuns</Text>
 
@@ -75,8 +87,9 @@ export default function PhotoNewDialog({trigger}: PhotoNewDialogProps) {
                     <Button variant="secondary">Cancelar</Button>
                 </DialogClose>
 
-                <Button>Adicionar</Button>
+                <Button type="submit">Adicionar</Button>
             </DialogFooter>
+            </form>
         </DialogContent>
     </Dialog>
   )
